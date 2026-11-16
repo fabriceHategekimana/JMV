@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JMV SERVICE – Location de voitures et utilitaires à Genève</title>
-    <meta name="description" content="JMV Service : location de véhicules utilitaires et voitures à Genève. Réservez en quelques clics, confirmation par WhatsApp.">
+    <title>JMV SERVICE – Chauffeur et location de véhicules à Genève</title>
+    <meta name="description" content="JMV Service : transport avec chauffeur (personnes et marchandises) et location de véhicules à Genève. Demande en quelques clics par WhatsApp.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -17,7 +17,7 @@
         <div class="wrap">
             <a href="#" class="logo">
                 <span class="logo-mark">JMV</span>
-                <span>SERVICE<br><small>LOCATION</small></span>
+                <span>SERVICE<br><small>GENÈVE</small></span>
             </a>
             <div class="nav-links">
                 <a href="#" class="btn btn-outline js-wa-direct">
@@ -31,47 +31,78 @@
     <!-- Hero -->
     <header class="hero">
         <div class="wrap">
-            <h1>Louez une <span>voiture</span> ou un <span>utilitaire</span></h1>
+            <h1>Votre <span>chauffeur</span> ou votre <span>véhicule</span> à Genève</h1>
         </div>
     </header>
 
     <!-- Booking widget -->
     <div class="wrap widget-wrap">
-        <form class="widget" id="quickSearch" novalidate>
-            <div class="widget-tabs">
-                <button type="button" class="chip active" data-type="all">Tous les véhicules</button>
-                <button type="button" class="chip" data-type="voiture">
+        <div class="widget">
+            <div class="service-tabs" role="tablist">
+                <button type="button" class="service-tab active" data-service="chauffeur" role="tab" aria-selected="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2"/><path d="M12 14v7M10.1 11.4 3.5 9.5M13.9 11.4l6.6-1.9"/></svg>
+                    Avec chauffeur
+                </button>
+                <button type="button" class="service-tab" data-service="location" role="tab" aria-selected="false">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14M5 17a2 2 0 1 1-4 0v-5l2-5h18l2 5v5a2 2 0 1 1-4 0M5 17a2 2 0 1 0 4 0m6 0a2 2 0 1 0 4 0"/></svg>
-                    Voitures
-                </button>
-                <button type="button" class="chip" data-type="utilitaire">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="5" width="15" height="11" rx="1"/><path d="M16 9h4l3 3v4h-7z"/><circle cx="5.5" cy="18" r="2"/><circle cx="18.5" cy="18" r="2"/></svg>
-                    Utilitaires
+                    Location de véhicule
                 </button>
             </div>
-            <div class="widget-grid">
-                <div class="field field-loc">
-                    <label for="qLocation">Lieu de prise en charge</label>
-                    <input type="text" id="qLocation" value="Genève" placeholder="Ville ou adresse">
-                </div>
-                <div class="field">
-                    <label for="qStartDate">Départ</label>
-                    <div class="datetime">
-                        <input type="date" id="qStartDate" required>
-                        <select id="qStartTime" aria-label="Heure de départ"></select>
+
+            <!-- Panneau : avec chauffeur -->
+            <form class="widget-panel" id="quickRide" data-panel="chauffeur" novalidate>
+                <div class="widget-grid ride">
+                    <div class="field">
+                        <label for="qrFrom">Départ</label>
+                        <input type="text" id="qrFrom" placeholder="Adresse, gare, aéroport...">
                     </div>
-                </div>
-                <div class="field">
-                    <label for="qEndDate">Retour</label>
-                    <div class="datetime">
-                        <input type="date" id="qEndDate" required>
-                        <select id="qEndTime" aria-label="Heure de retour"></select>
+                    <div class="field">
+                        <label for="qrTo">Arrivée</label>
+                        <input type="text" id="qrTo" placeholder="Adresse, gare, aéroport...">
                     </div>
+                    <div class="field">
+                        <label for="qrDate">Date et heure</label>
+                        <div class="datetime">
+                            <input type="date" id="qrDate" required>
+                            <select id="qrTime" aria-label="Heure de départ"></select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-orange">Continuer</button>
                 </div>
-                <button type="submit" class="btn btn-orange">Voir les véhicules</button>
-            </div>
-            <div class="field-error" id="quickError"></div>
-        </form>
+                <div class="field-error" id="quickRideError"></div>
+            </form>
+
+            <!-- Panneau : location -->
+            <form class="widget-panel" id="quickSearch" data-panel="location" novalidate hidden>
+                <div class="widget-tabs">
+                    <button type="button" class="chip active" data-type="all">Tous les véhicules</button>
+                    <button type="button" class="chip" data-type="voiture">Voitures</button>
+                    <button type="button" class="chip" data-type="utilitaire">Utilitaires</button>
+                </div>
+                <div class="widget-grid">
+                    <div class="field field-loc">
+                        <label for="qLocation">Lieu de prise en charge</label>
+                        <input type="text" id="qLocation" value="Genève" placeholder="Ville ou adresse">
+                    </div>
+                    <div class="field">
+                        <label for="qStartDate">Départ</label>
+                        <div class="datetime">
+                            <input type="date" id="qStartDate" required>
+                            <select id="qStartTime" aria-label="Heure de départ"></select>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="qEndDate">Retour</label>
+                        <div class="datetime">
+                            <input type="date" id="qEndDate" required>
+                            <select id="qEndTime" aria-label="Heure de retour"></select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-orange">Voir les véhicules</button>
+                </div>
+                <div class="field-error" id="quickError"></div>
+            </form>
+        </div>
     </div>
 
     <!-- Benefits -->
@@ -101,13 +132,141 @@
         </div>
     </div>
 
+    <!-- Course avec chauffeur -->
+    <section class="reserve" id="chauffeur">
+        <div class="wrap">
+            <div class="section-head">
+                <span class="eyebrow">Avec chauffeur</span>
+                <h2>Réservez votre course</h2>
+                <p>Personnes ou marchandises : nous vous conduisons où vous voulez. Prix sur devis.</p>
+            </div>
+
+            <form id="rideForm" class="reserve-grid" novalidate>
+                <div class="card">
+                    <div class="form-block">
+                        <h3><span class="step-num">1</span> Votre trajet</h3>
+                        <div class="form-grid">
+                            <div class="field full">
+                                <label>Type de course *</label>
+                                <div class="choice-group">
+                                    <label class="choice"><input type="radio" name="rType" value="simple" checked><span>Trajet simple</span></label>
+                                    <label class="choice"><input type="radio" name="rType" value="retour"><span>Aller-retour</span></label>
+                                    <label class="choice"><input type="radio" name="rType" value="dispo"><span>Mise à disposition</span></label>
+                                </div>
+                            </div>
+                            <div class="field full">
+                                <label>Que transportons-nous ? *</label>
+                                <div class="choice-group">
+                                    <label class="choice"><input type="radio" name="rCargo" value="passagers" checked><span>Passagers</span></label>
+                                    <label class="choice"><input type="radio" name="rCargo" value="marchandises"><span>Marchandises / déménagement</span></label>
+                                </div>
+                            </div>
+                            <div class="field full">
+                                <label for="rFrom">Lieu de départ *</label>
+                                <input type="text" id="rFrom" required placeholder="Adresse, gare, aéroport...">
+                            </div>
+                            <div class="field full">
+                                <label for="rTo" id="rToLabel">Lieu d'arrivée *</label>
+                                <input type="text" id="rTo" required placeholder="Adresse, gare, aéroport...">
+                            </div>
+                            <div class="field">
+                                <label for="rDate">Date et heure de départ *</label>
+                                <div class="datetime">
+                                    <input type="date" id="rDate" required>
+                                    <select id="rTime" aria-label="Heure de départ"></select>
+                                </div>
+                            </div>
+                            <div class="field" data-show="retour">
+                                <label for="rBackDate">Date et heure du retour *</label>
+                                <div class="datetime">
+                                    <input type="date" id="rBackDate" required>
+                                    <select id="rBackTime" aria-label="Heure du retour"></select>
+                                </div>
+                            </div>
+                            <div class="field" data-show="dispo">
+                                <label for="rHours">Durée *</label>
+                                <select id="rHours" required></select>
+                            </div>
+                            <div class="field" data-show="passagers">
+                                <label for="rPassengers">Passagers *</label>
+                                <select id="rPassengers" required></select>
+                            </div>
+                            <div class="field" data-show="passagers">
+                                <label for="rLuggage">Bagages</label>
+                                <select id="rLuggage"></select>
+                            </div>
+                            <div class="field full" data-show="marchandises">
+                                <label for="rLoad">Que faut-il transporter ? *</label>
+                                <textarea id="rLoad" required placeholder="Ex : 10 cartons, un canapé, une machine à laver. Étage, ascenseur, aide au chargement souhaitée..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-block">
+                        <h3><span class="step-num">2</span> Vos coordonnées</h3>
+                        <div class="form-grid">
+                            <div class="field">
+                                <label for="rFirstName">Prénom *</label>
+                                <input type="text" id="rFirstName" required autocomplete="given-name">
+                            </div>
+                            <div class="field">
+                                <label for="rLastName">Nom *</label>
+                                <input type="text" id="rLastName" required autocomplete="family-name">
+                            </div>
+                            <div class="field">
+                                <label for="rPhone">Téléphone *</label>
+                                <input type="tel" id="rPhone" required autocomplete="tel" placeholder="+41 79 123 45 67">
+                            </div>
+                            <div class="field">
+                                <label for="rEmail">Email</label>
+                                <input type="email" id="rEmail" autocomplete="email" placeholder="facultatif">
+                            </div>
+                            <div class="field full">
+                                <label for="rMessage">Message</label>
+                                <textarea id="rMessage" placeholder="Numéro de vol, siège enfant, étapes intermédiaires, questions..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field-error" id="rideError"></div>
+                </div>
+
+                <aside class="card summary">
+                    <div class="summary-img" id="rSumImg"></div>
+                    <div class="summary-body">
+                        <h4 id="rSumName">Course avec chauffeur</h4>
+                        <div class="sub" id="rSumSub">–</div>
+                        <div class="timeline">
+                            <div class="tl-item">
+                                <small>Départ</small>
+                                <span id="rSumFrom">–</span>
+                            </div>
+                            <div class="tl-item">
+                                <small id="rSumToLabel">Arrivée</small>
+                                <span id="rSumTo">–</span>
+                            </div>
+                        </div>
+                        <div class="duration">
+                            <span>Tarif</span>
+                            <strong>Sur devis</strong>
+                        </div>
+                        <button type="submit" class="btn btn-wa">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.170-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.88 1.21 3.08.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.69.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35zM12.04 21.5h-.01a9.46 9.46 0 0 1-4.82-1.32l-.35-.21-3.58.94.96-3.49-.23-.36a9.44 9.44 0 0 1-1.45-5.03c0-5.22 4.25-9.47 9.48-9.47 2.53 0 4.91.99 6.7 2.78a9.41 9.41 0 0 1 2.77 6.7c0 5.230-4.25 9.46-9.47 9.46zm8.06-17.53A11.32 11.32 0 0 0 12.04.63C5.76.63.65 5.74.65 12.02c0 2.01.52 3.97 1.52 5.69L.55 23.63l6.05-1.59a11.36 11.36 0 0 0 5.44 1.39h.01c6.28 0 11.39-5.11 11.39-11.39 0-3.04-1.19-5.9-3.34-8.06z"/></svg>
+                            Envoyer sur WhatsApp
+                        </button>
+                        <p class="summary-note">WhatsApp s'ouvre avec votre demande pré-remplie, il ne reste qu'à appuyer sur « Envoyer ».</p>
+                    </div>
+                </aside>
+            </form>
+        </div>
+    </section>
+
     <!-- Fleet -->
     <section id="flotte">
         <div class="wrap">
             <div class="section-head">
-                <span class="eyebrow">Notre flotte</span>
+                <span class="eyebrow">Location sans chauffeur</span>
                 <h2>Choisissez votre véhicule</h2>
-                <p>Sélectionnez un véhicule pour l'ajouter à votre demande de réservation.</p>
+                <p>Sélectionnez un véhicule pour l'ajouter à votre demande de location.</p>
             </div>
             <div class="fleet-filters" id="fleetFilters">
                 <button type="button" class="chip active" data-type="all">Tous</button>
@@ -127,16 +286,16 @@
             </div>
             <div class="steps">
                 <div class="step">
-                    <h3>Choisissez vos dates</h3>
-                    <p>Indiquez le lieu, la date et l'heure de départ et de retour.</p>
-                </div>
-                <div class="step">
-                    <h3>Sélectionnez un véhicule</h3>
-                    <p>Voiture ou utilitaire : choisissez celui qui correspond à votre besoin.</p>
+                    <h3>Décrivez votre besoin</h3>
+                    <p>Une course avec chauffeur ou un véhicule à louer, avec la date et l'heure.</p>
                 </div>
                 <div class="step">
                     <h3>Envoyez sur WhatsApp</h3>
-                    <p>Votre demande est envoyée par WhatsApp. Nous vous confirmons la disponibilité et le tarif.</p>
+                    <p>Votre demande s'ouvre pré-remplie dans WhatsApp, il suffit d'appuyer sur « Envoyer ».</p>
+                </div>
+                <div class="step">
+                    <h3>Recevez votre devis</h3>
+                    <p>Nous vous confirmons la disponibilité et le prix.</p>
                 </div>
             </div>
         </div>
@@ -146,8 +305,8 @@
     <section class="reserve" id="reserver">
         <div class="wrap">
             <div class="section-head">
-                <span class="eyebrow">Réservation</span>
-                <h2>Finalisez votre demande</h2>
+                <span class="eyebrow">Location</span>
+                <h2>Finalisez votre location</h2>
             </div>
 
             <form id="bookingForm" class="reserve-grid" novalidate>
@@ -255,15 +414,15 @@
                         <span class="logo-mark">JMV</span>
                         <span>SERVICE</span>
                     </a>
-                    <p>Location de véhicules utilitaires et voitures à Genève.</p>
+                    <p>Transport avec chauffeur et location de véhicules à Genève.</p>
                 </div>
                 <div>
                     <h4>Navigation</h4>
                     <ul>
-                        <li><a href="#flotte">Nos véhicules</a></li>
+                        <li><a href="#chauffeur">Avec chauffeur</a></li>
+                        <li><a href="#flotte">Location de véhicules</a></li>
                         <li><a href="#fonctionnement">Comment ça marche</a></li>
-                        <li><a href="#reserver">Réserver</a></li>
-                    </ul>
+                                            </ul>
                 </div>
                 <div>
                     <h4>Contact</h4>

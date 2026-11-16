@@ -5,8 +5,20 @@ const CONFIG = {
     // Numéro WhatsApp qui reçoit les demandes.
     // Format international, chiffres uniquement, sans "+" ni "00" (ex : 41791234567)
     whatsappNumber: '41779473582',
-    openingHour: 7,   // première heure proposée
-    closingHour: 20   // dernière heure proposée
+    openingHour: 7,   // location : première heure proposée
+    closingHour: 20,  // location : dernière heure proposée
+
+    // Courses avec chauffeur
+    ride: {
+        passengersVehicle: 'lexus',     // véhicule utilisé pour les passagers (id dans VEHICLES)
+        goodsVehicle: 'sprinter',       // véhicule utilisé pour les marchandises
+        maxPassengers: 4,
+        maxLuggage: 6,
+        minHours: 2,                    // mise à disposition : durée minimum
+        maxHours: 12,                   // mise à disposition : durée maximum
+        firstHour: 0,                   // heures proposées (0 à 23 = 24h/24)
+        lastHour: 23
+    }
 };
 
 // Liste des véhicules : ajoutez / modifiez ici.
@@ -58,10 +70,10 @@ const fmtDateTime = (date, time) => {
     return d ? `${fmtDate(d)} à ${time.replace(':', 'h')}` : '–';
 };
 
-function fillTimeSelect(select, defaultValue) {
-    for (let h = CONFIG.openingHour; h <= CONFIG.closingHour; h++) {
+function fillTimeSelect(select, defaultValue, first = CONFIG.openingHour, last = CONFIG.closingHour, lastHalf = false) {
+    for (let h = first; h <= last; h++) {
         for (const m of ['00', '30']) {
-            if (h === CONFIG.closingHour && m === '30') continue;
+            if (h === last && m === '30' && !lastHalf) continue;
             const v = `${pad(h)}:${m}`;
             select.add(new Option(v, v, false, v === defaultValue));
         }
@@ -189,6 +201,171 @@ function toast(msg) {
     toast._t = setTimeout(() => t.classList.remove('show'), 4500);
 }
 
+/* ---------- Onglets de service ---------- */
+function setService(service) {
+    $$('.service-tab').forEach(t => {
+        const on = t.dataset.service === service;
+        t.classList.toggle('active', on);
+        t.setAttribute('aria-selected', on);
+    });
+    $$('.widget-panel').forEach(p => p.hidden = p.dataset.panel !== service);
+}
+
+/* ---------- Course avec chauffeur ---------- */
+const RIDE_TYPES = { simple: 'Trajet simple', retour: 'Aller-retour', dispo: 'Mise à disposition' };
+const RIDE_CARGO = { passagers: 'Passagers', marchandises: 'Marchandises / déménagement' };
+
+const rideType = () => document.querySelector('input[name="rType"]:checked').value;
+const rideCargo = () => document.querySelector('input[name="rCargo"]:checked').value;
+const rideVehicle = () => VEHICLES.find(v => v.id === (rideCargo() === 'passagers' ? CONFIG.ride.passengersVehicle : CONFIG.ride.goodsVehicle));
+
+// Affiche / masque les champs selon le type de course et le transport.
+// Un champ masqué est désactivé : il n'est alors plus obligatoire.
+function updateRideForm() {
+    const type = rideType();
+    const cargo = rideCargo();
+    $$('#rideForm [data-show]').forEach(f => {
+        const show = f.dataset.show === type || f.dataset.show === cargo;
+        f.hidden = !show;
+        f.querySelectorAll('input, select, textarea').forEach(el => el.disabled = !show);
+    });
+    $('#rDate').closest('.field').classList.toggle('full', type === 'simple');
+
+    const dispo = type === 'dispo';
+    $('#rTo').required = !dispo;
+    $('#rToLabel').textContent = dispo ? 'Destination (facultatif)' : 'Lieu d\'arrivée *';
+    updateRideSummary();
+}
+
+function updateRideSummary() {
+    const type = rideType();
+    const v = rideVehicle();
+    $('#rSumImg').innerHTML = v ? `<img src="${v.images[0]}" alt="${v.name}">` : '';
+    $('#rSumName').textContent = RIDE_TYPES[type];
+    $('#rSumSub').textContent = `${RIDE_CARGO[rideCargo()]}${v ? ' · ' + v.name : ''}`;
+
+    const date = fmtDateTime($('#rDate').value, $('#rTime').value);
+    const from = $('#rFrom').value.trim();
+    const to = $('#rTo').value.trim();
+    $('#rSumFrom').textContent = from ? `${from}, ${date}` : date;
+
+    if (type === 'retour') {
+        $('#rSumToLabel').textContent = 'Arrivée, puis retour';
+        $('#rSumTo').textContent = `${to || '–'}, retour ${fmtDateTime($('#rBackDate').value, $('#rBackTime').value)}`;
+    } else if (type === 'dispo') {
+        $('#rSumToLabel').textContent = 'Durée';
+        $('#rSumTo').textContent = `${$('#rHours').value} heures${to ? ', vers ' + to : ''}`;
+    } else {
+        $('#rSumToLabel').textContent = 'Arrivée';
+        $('#rSumTo').textContent = to || '–';
+    }
+}
+
+function validateRide() {
+    const start = combine($('#rDate').value, $('#rTime').value);
+    if (!start) return 'Veuillez indiquer la date et l\'heure de départ.';
+    if (start < new Date()) return 'La date de départ doit être dans le futur.';
+    if (rideType() === 'retour') {
+        const back = combine($('#rBackDate').value, $('#rBackTime').value);
+        if (!back || back <= start) return 'Le retour doit être après le départ.';
+    }
+    return null;
+}
+
+function buildRideMessage() {
+    const type = rideType();
+    const cargo = rideCargo();
+    const v = rideVehicle();
+    const lines = [
+        '*Nouvelle demande de course avec chauffeur – JMV Service*',
+        '',
+        `- *Type de course :* ${RIDE_TYPES[type]}`,
+        `- *Transport :* ${RIDE_CARGO[cargo]}${v ? ` (${v.name})` : ''}`,
+        `- *Départ :* ${$('#rFrom').value.trim()}`
+    ];
+    const to = $('#rTo').value.trim();
+    if (to) lines.push(`- *${type === 'dispo' ? 'Destination' : 'Arrivée'} :* ${to}`);
+    lines.push(`- *Date :* ${fmtDateTime($('#rDate').value, $('#rTime').value)}`);
+    if (type === 'retour') lines.push(`- *Retour :* ${fmtDateTime($('#rBackDate').value, $('#rBackTime').value)}`);
+    if (type === 'dispo') lines.push(`- *Durée :* ${$('#rHours').value} heures`);
+    if (cargo === 'passagers') {
+        lines.push(`- *Passagers :* ${$('#rPassengers').value}`);
+        lines.push(`- *Bagages :* ${$('#rLuggage').value}`);
+    } else {
+        lines.push(`- *Chargement :* ${$('#rLoad').value.trim()}`);
+    }
+    lines.push('',
+        `- *Nom :* ${$('#rFirstName').value.trim()} ${$('#rLastName').value.trim()}`,
+        `- *Téléphone :* ${$('#rPhone').value.trim()}`);
+    const email = $('#rEmail').value.trim();
+    if (email) lines.push(`- *Email :* ${email}`);
+    const msg = $('#rMessage').value.trim();
+    if (msg) lines.push('', `- *Message :* ${msg}`);
+    return lines.join('\n');
+}
+
+function initRide() {
+    const R = CONFIG.ride;
+    const today = toISODate(new Date());
+    const tomorrow = toISODate(addDays(new Date(), 1));
+    ['#qrTime', '#rTime', '#rBackTime'].forEach(s => fillTimeSelect($(s), '09:00', R.firstHour, R.lastHour, true));
+    $('#rBackTime').value = '18:00';
+    ['#qrDate', '#rDate', '#rBackDate'].forEach(s => { $(s).min = today; $(s).value = tomorrow; });
+    for (let h = R.minHours; h <= R.maxHours; h++) $('#rHours').add(new Option(`${h} heures`, h));
+    for (let n = 1; n <= R.maxPassengers; n++) $('#rPassengers').add(new Option(n, n));
+    for (let n = 0; n <= R.maxLuggage; n++) $('#rLuggage').add(new Option(n, n));
+
+    $('#rDate').addEventListener('change', () => {
+        $('#rBackDate').min = $('#rDate').value;
+        if ($('#rBackDate').value < $('#rDate').value) $('#rBackDate').value = $('#rDate').value;
+    });
+    $$('#rideForm input, #rideForm select').forEach(el => {
+        el.addEventListener('change', el.type === 'radio' ? updateRideForm : updateRideSummary);
+    });
+    ['#rFrom', '#rTo'].forEach(s => $(s).addEventListener('input', updateRideSummary));
+
+    // Haut de page -> copie vers le formulaire complet
+    $('#quickRide').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const start = combine($('#qrDate').value, $('#qrTime').value);
+        const err = !start ? 'Veuillez indiquer la date et l\'heure.'
+            : start < new Date() ? 'La date de départ doit être dans le futur.' : null;
+        showError($('#quickRideError'), err);
+        if (err) return;
+        $('#rFrom').value = $('#qrFrom').value;
+        $('#rTo').value = $('#qrTo').value;
+        $('#rDate').value = $('#qrDate').value;
+        $('#rTime').value = $('#qrTime').value;
+        $('#rDate').dispatchEvent(new Event('change'));
+        $('#chauffeur').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    $('#rideForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const errEl = $('#rideError');
+        const firstInvalid = [...e.target.querySelectorAll('[required]')].find(el => !el.checkValidity());
+        if (firstInvalid) {
+            showError(errEl, 'Veuillez remplir tous les champs obligatoires (*).');
+            firstInvalid.focus();
+            return;
+        }
+        const email = $('#rEmail');
+        if (email.value && !email.checkValidity()) {
+            showError(errEl, 'L\'adresse email n\'est pas valide.');
+            email.focus();
+            return;
+        }
+        const dateErr = validateRide();
+        if (dateErr) { showError(errEl, dateErr); return; }
+
+        showError(errEl, null);
+        openWhatsApp(buildRideMessage());
+        toast('WhatsApp s\'ouvre : appuyez sur « Envoyer » pour transmettre votre demande.');
+    });
+
+    updateRideForm();
+}
+
 /* ---------- WhatsApp ---------- */
 function openWhatsApp(text) {
     const url = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(text)}`;
@@ -200,21 +377,21 @@ function buildMessage() {
     const v = VEHICLES.find(x => x.id === $('#bVehicle').value);
     const days = getDuration();
     const lines = [
-        '*Nouvelle demande de réservation – JMV Service*',
+        '*Nouvelle demande de location – JMV Service*',
         '',
-        `🚗 *Véhicule :* ${v.name} (${v.similar})`,
-        `📍 *Prise en charge :* ${$('#bLocation').value.trim()}`,
-        `📅 *Départ :* ${fmtDateTime($('#bStartDate').value, $('#bStartTime').value)}`,
-        `📅 *Retour :* ${fmtDateTime($('#bEndDate').value, $('#bEndTime').value)}`,
-        `⏱️ *Durée :* ${days} jour${days > 1 ? 's' : ''}`,
+        `- *Véhicule :* ${v.name} (${v.similar})`,
+        `- *Prise en charge :* ${$('#bLocation').value.trim()}`,
+        `- *Départ :* ${fmtDateTime($('#bStartDate').value, $('#bStartTime').value)}`,
+        `- *Retour :* ${fmtDateTime($('#bEndDate').value, $('#bEndTime').value)}`,
+        `- *Durée :* ${days} jour${days > 1 ? 's' : ''}`,
         '',
-        `👤 *Nom :* ${$('#bFirstName').value.trim()} ${$('#bLastName').value.trim()}`,
-        `📞 *Téléphone :* ${$('#bPhone').value.trim()}`
+        `- *Nom :* ${$('#bFirstName').value.trim()} ${$('#bLastName').value.trim()}`,
+        `- *Téléphone :* ${$('#bPhone').value.trim()}`
     ];
     const email = $('#bEmail').value.trim();
-    if (email) lines.push(`✉️ *Email :* ${email}`);
+    if (email) lines.push(`- *Email :* ${email}`);
     const msg = $('#bMessage').value.trim();
-    if (msg) lines.push('', `💬 *Message :* ${msg}`);
+    if (msg) lines.push('', `- *Message :* ${msg}`);
     return lines.join('\n');
 }
 
@@ -297,9 +474,13 @@ function init() {
     // Liens WhatsApp directs
     $$('.js-wa-direct').forEach(a => a.addEventListener('click', (e) => {
         e.preventDefault();
-        openWhatsApp('Bonjour JMV Service, je souhaite des informations sur la location de véhicules.');
+        openWhatsApp('Bonjour JMV Service, je souhaite des informations sur vos services.');
     }));
 
+    // Onglets chauffeur / location
+    $$('.service-tab').forEach(t => t.addEventListener('click', () => setService(t.dataset.service)));
+
+    initRide();
     renderFleet();
     updateSummary();
 }
