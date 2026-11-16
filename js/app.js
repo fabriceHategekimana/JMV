@@ -4,7 +4,7 @@
 const CONFIG = {
     // Numéro WhatsApp qui reçoit les demandes.
     // Format international, chiffres uniquement, sans "+" ni "00" (ex : 41791234567)
-    whatsappNumber: '41000000000',
+    whatsappNumber: '41779473582',
     openingHour: 7,   // première heure proposée
     closingHour: 20   // dernière heure proposée
 };
