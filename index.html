@@ -3,326 +3,922 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JMV SERVICE - Location de Véhicules</title>
+    <title>JMV SERVICE – Location de voitures et utilitaires à Genève</title>
+    <meta name="description" content="JMV Service : location de véhicules utilitaires et voitures à Genève. Réservez en quelques clics, confirmation par WhatsApp.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --orange: #ff5f00;
+            --orange-dark: #e05300;
+            --black: #191919;
+            --grey-900: #262626;
+            --grey-700: #4d4d4d;
+            --grey-500: #8c8c8c;
+            --grey-200: #e6e6e6;
+            --grey-100: #f4f4f4;
+            --white: #ffffff;
+            --whatsapp: #25d366;
+            --radius: 10px;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
+            font-family: 'Inter', -apple-system, 'Segoe UI', Roboto, sans-serif;
+            color: var(--black);
+            background: var(--white);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
         }
 
-        header {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-            color: white;
-            padding: 3rem 2rem;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
+        img { display: block; max-width: 100%; }
+        a { color: inherit; text-decoration: none; }
+        button { font-family: inherit; cursor: pointer; }
 
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
+        .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 
-        header p {
-            font-size: 1.2rem;
-            opacity: 0.95;
+        /* ---------- Navigation ---------- */
+        .nav {
+            position: sticky; top: 0; z-index: 50;
+            background: var(--black);
+            color: var(--white);
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
+        .nav .wrap {
+            display: flex; align-items: center; justify-content: space-between;
+            height: 68px;
         }
-
-        .intro {
-            text-align: center;
-            margin: 3rem 0;
+        .logo { display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 1.35rem; letter-spacing: 0.5px; }
+        .logo-mark {
+            background: var(--orange); color: var(--white);
+            padding: 4px 10px; border-radius: 4px; font-size: 1.2rem;
         }
+        .logo small { font-weight: 600; font-size: 0.75rem; color: var(--grey-500); letter-spacing: 2px; }
+        .nav-links { display: flex; align-items: center; gap: 32px; font-weight: 600; font-size: 0.95rem; }
+        .nav-links a:not(.btn):hover { color: var(--orange); }
 
-        .intro h2 {
-            color: #1a2a6c;
-            margin-bottom: 1rem;
-            font-size: 2rem;
+        /* ---------- Buttons ---------- */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            border: none; border-radius: 6px;
+            padding: 14px 26px;
+            font-weight: 700; font-size: 1rem;
+            transition: background 0.2s, transform 0.1s;
         }
+        .btn:active { transform: scale(0.98); }
+        .btn-orange { background: var(--orange); color: var(--white); }
+        .btn-orange:hover { background: var(--orange-dark); }
+        .btn-outline { background: transparent; color: var(--white); border: 2px solid rgba(255,255,255,0.35); padding: 9px 18px; font-size: 0.9rem; }
+        .btn-outline:hover { border-color: var(--orange); color: var(--orange); }
+        .btn-dark { background: var(--black); color: var(--white); }
+        .btn-dark:hover { background: var(--grey-900); }
+        .btn svg { width: 20px; height: 20px; flex-shrink: 0; }
 
-        .intro p {
-            font-size: 1.1rem;
-            color: #666;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .vehicles-section {
-            margin: 3rem 0;
-        }
-
-        .vehicles-section h2 {
-            text-align: center;
-            color: #1a2a6c;
-            margin-bottom: 2rem;
-            font-size: 2rem;
-        }
-
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin: 3rem 0;
-        }
-
-        .vehicle-card {
-            background: white;
-            border-radius: 12px;
+        /* ---------- Hero ---------- */
+        .hero {
+            position: relative;
+            background: var(--black);
+            color: var(--white);
+            padding: 72px 0 120px;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
         }
-
-        .vehicle-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        .hero::before {
+            content: ""; position: absolute; inset: 0;
+            background: url('img/voiture4.png') center 40% / cover no-repeat;
+            opacity: 0.35;
         }
+        .hero::after {
+            content: ""; position: absolute; inset: 0;
+            background: linear-gradient(90deg, rgba(25,25,25,0.95) 0%, rgba(25,25,25,0.6) 60%, rgba(25,25,25,0.3) 100%);
+        }
+        .hero .wrap { position: relative; z-index: 1; }
+        .eyebrow {
+            display: inline-block;
+            color: var(--orange); font-weight: 700; font-size: 0.85rem;
+            letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px;
+        }
+        .hero h1 {
+            font-size: clamp(2.2rem, 5vw, 3.8rem);
+            font-weight: 900; line-height: 1.05;
+            text-transform: uppercase;
+            max-width: 760px;
+        }
+        .hero h1 span { color: var(--orange); }
+        .hero p.lead { margin-top: 18px; font-size: 1.15rem; color: #d9d9d9; max-width: 560px; }
 
-        .vehicle-image {
+        /* ---------- Booking widget ---------- */
+        .widget-wrap { position: relative; z-index: 5; margin-top: -72px; }
+        .widget {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+        }
+        .widget-tabs { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+        .chip {
+            border: 2px solid var(--grey-200); background: var(--white);
+            border-radius: 999px; padding: 8px 18px;
+            font-weight: 600; font-size: 0.9rem; color: var(--grey-700);
+            display: inline-flex; align-items: center; gap: 8px;
+        }
+        .chip svg { width: 18px; height: 18px; }
+        .chip.active { border-color: var(--black); background: var(--black); color: var(--white); }
+        .widget-grid {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr 1fr auto;
+            gap: 12px;
+            align-items: end;
+        }
+        .field label {
+            display: block; font-size: 0.78rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.5px;
+            color: var(--grey-700); margin-bottom: 6px;
+        }
+        .field input, .field select, .field textarea {
             width: 100%;
-            height: 250px;
-            background: #888;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 3rem;
+            border: 2px solid var(--grey-200);
+            background: var(--grey-100);
+            border-radius: 6px;
+            padding: 12px 14px;
+            font-family: inherit; font-size: 1rem; font-weight: 500;
+            color: var(--black);
+            transition: border-color 0.2s, background 0.2s;
         }
-
-        .vehicle-info {
-            padding: 1.5rem;
-            text-align: center;
+        .field input:focus, .field select:focus, .field textarea:focus {
+            outline: none; border-color: var(--orange); background: var(--white);
         }
+        .field textarea { resize: vertical; min-height: 100px; }
+        .datetime { display: grid; grid-template-columns: 1fr 96px; gap: 6px; }
+        .widget .btn { height: 50px; white-space: nowrap; }
+        .field-error { color: #d62d20; font-size: 0.85rem; margin-top: 10px; display: none; font-weight: 600; }
 
-        .vehicle-info h3 {
-            color: #1a2a6c;
-            margin-bottom: 0.5rem;
-            font-size: 1.3rem;
+        /* ---------- Sections ---------- */
+        section { padding: 80px 0; }
+        .section-head { margin-bottom: 36px; }
+        .section-head h2 { font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 900; text-transform: uppercase; line-height: 1.1; }
+        .section-head p { color: var(--grey-700); margin-top: 10px; font-size: 1.05rem; }
+
+        /* ---------- Benefits ---------- */
+        .benefits { padding: 56px 0 0; }
+        .benefits-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .benefit { display: flex; gap: 16px; align-items: flex-start; }
+        .benefit-icon {
+            flex-shrink: 0; width: 48px; height: 48px; border-radius: 50%;
+            background: #fff0e6; color: var(--orange);
+            display: flex; align-items: center; justify-content: center;
         }
+        .benefit-icon svg { width: 24px; height: 24px; }
+        .benefit h3 { font-size: 1.05rem; font-weight: 800; }
+        .benefit p { color: var(--grey-700); font-size: 0.95rem; }
 
-        .vehicle-info p {
-            color: #666;
-            font-size: 1rem;
+        /* ---------- Fleet ---------- */
+        .fleet-filters { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
+        .fleet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 28px; }
+        .car {
+            border: 1px solid var(--grey-200);
+            border-radius: var(--radius);
+            overflow: hidden;
+            background: var(--white);
+            display: flex; flex-direction: column;
+            transition: box-shadow 0.25s, transform 0.25s;
         }
-
-        .contact-section {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f);
-            color: white;
-            padding: 3rem 2rem;
-            border-radius: 12px;
-            margin: 3rem 0;
+        .car:hover { box-shadow: var(--shadow); transform: translateY(-4px); }
+        .car.selected { border-color: var(--orange); box-shadow: 0 0 0 2px var(--orange); }
+        .car-media { position: relative; aspect-ratio: 4 / 3; background: var(--grey-100); overflow: hidden; }
+        .car-media img {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            object-fit: cover; opacity: 0; transition: opacity 0.4s;
         }
-
-        .contact-section h2 {
-            text-align: center;
-            margin-bottom: 2rem;
-            font-size: 2rem;
+        .car-media img.show { opacity: 1; }
+        .car-tag {
+            position: absolute; top: 14px; left: 14px; z-index: 2;
+            background: var(--black); color: var(--white);
+            font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+            padding: 5px 10px; border-radius: 4px;
         }
-
-        .contact-form {
-            max-width: 600px;
-            margin: 0 auto;
+        .car-arrow {
+            position: absolute; top: 50%; transform: translateY(-50%); z-index: 2;
+            width: 38px; height: 38px; border-radius: 50%; border: none;
+            background: rgba(255,255,255,0.9); color: var(--black);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.2s;
         }
+        .car-arrow svg { width: 18px; height: 18px; }
+        .car-arrow.prev { left: 12px; }
+        .car-arrow.next { right: 12px; }
+        .car-media:hover .car-arrow { opacity: 1; }
+        .car-dots { position: absolute; bottom: 12px; left: 0; right: 0; display: flex; justify-content: center; gap: 6px; z-index: 2; }
+        .car-dots span { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.55); }
+        .car-dots span.on { background: var(--white); width: 22px; border-radius: 4px; }
+        .car-body { padding: 22px; display: flex; flex-direction: column; flex: 1; }
+        .car-body h3 { font-size: 1.35rem; font-weight: 800; }
+        .car-body .similar { color: var(--grey-500); font-size: 0.85rem; font-weight: 500; }
+        .specs { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 16px 0 20px; }
+        .spec { display: flex; align-items: center; gap: 6px; font-size: 0.9rem; font-weight: 600; color: var(--grey-700); }
+        .spec svg { width: 18px; height: 18px; color: var(--grey-500); }
+        .car-foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid var(--grey-200); padding-top: 18px; }
+        .price small { display: block; font-size: 0.75rem; color: var(--grey-500); font-weight: 600; text-transform: uppercase; }
+        .price strong { font-size: 1.1rem; font-weight: 800; }
 
-        .form-group {
-            margin-bottom: 1.5rem;
+        /* ---------- Reservation ---------- */
+        .reserve { background: var(--grey-100); }
+        .reserve-grid { display: grid; grid-template-columns: 1fr 380px; gap: 32px; align-items: start; }
+        .card { background: var(--white); border-radius: var(--radius); padding: 28px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .card h3 {
+            font-size: 1.1rem; font-weight: 800; margin-bottom: 18px;
+            display: flex; align-items: center; gap: 10px;
         }
+        .step-num {
+            width: 28px; height: 28px; border-radius: 50%;
+            background: var(--orange); color: var(--white);
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 0.85rem;
+        }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .form-grid .full { grid-column: 1 / -1; }
+        .form-block + .form-block { margin-top: 32px; padding-top: 28px; border-top: 1px solid var(--grey-200); }
+        .checkbox { display: flex; gap: 10px; align-items: flex-start; font-size: 0.9rem; color: var(--grey-700); }
+        .checkbox input { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--orange); flex-shrink: 0; }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
+        .summary { position: sticky; top: 92px; padding: 0; overflow: hidden; }
+        .summary-img { aspect-ratio: 16 / 10; background: var(--grey-200); }
+        .summary-img img { width: 100%; height: 100%; object-fit: cover; }
+        .summary-img .placeholder {
+            height: 100%; display: flex; align-items: center; justify-content: center;
+            color: var(--grey-500); font-weight: 600; font-size: 0.95rem; padding: 20px; text-align: center;
+        }
+        .summary-body { padding: 24px; }
+        .summary-body h4 { font-size: 1.25rem; font-weight: 800; }
+        .summary-body .sub { color: var(--grey-500); font-size: 0.9rem; margin-bottom: 18px; }
+        .timeline { position: relative; padding-left: 26px; margin-bottom: 18px; }
+        .timeline::before { content: ""; position: absolute; left: 6px; top: 8px; bottom: 8px; width: 2px; background: var(--grey-200); }
+        .tl-item { position: relative; margin-bottom: 14px; }
+        .tl-item:last-child { margin-bottom: 0; }
+        .tl-item::before {
+            content: ""; position: absolute; left: -26px; top: 5px;
+            width: 14px; height: 14px; border-radius: 50%;
+            background: var(--white); border: 3px solid var(--orange);
+        }
+        .tl-item small { display: block; color: var(--grey-500); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .tl-item span { font-weight: 600; }
+        .duration {
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--grey-100); border-radius: 6px; padding: 12px 14px; margin-bottom: 18px;
             font-weight: 600;
         }
+        .duration strong { font-size: 1.15rem; font-weight: 800; }
+        .btn-wa { width: 100%; background: var(--whatsapp); color: var(--white); padding: 16px; font-size: 1.05rem; }
+        .btn-wa:hover { background: #1ebe5a; }
+        .summary-note { font-size: 0.8rem; color: var(--grey-500); margin-top: 12px; text-align: center; }
 
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 0.8rem;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-family: inherit;
+        .toast {
+            position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 120px);
+            background: var(--black); color: var(--white);
+            padding: 14px 22px; border-radius: 8px; font-weight: 600;
+            box-shadow: var(--shadow); z-index: 100;
+            transition: transform 0.3s ease; max-width: calc(100% - 32px);
         }
+        .toast.show { transform: translate(-50%, 0); }
 
-        .form-group textarea {
-            resize: vertical;
-            min-height: 120px;
+        /* ---------- How it works ---------- */
+        .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; counter-reset: s; }
+        .step { border-top: 4px solid var(--orange); padding-top: 18px; }
+        .step::before {
+            counter-increment: s; content: "0" counter(s);
+            display: block; font-size: 2.4rem; font-weight: 900; color: var(--grey-200); line-height: 1;
+            margin-bottom: 10px;
         }
+        .step h3 { font-size: 1.15rem; font-weight: 800; margin-bottom: 6px; }
+        .step p { color: var(--grey-700); }
 
-        .submit-btn {
-            background: #fdbb2d;
-            color: #1a2a6c;
-            padding: 1rem 3rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
+        /* ---------- Footer ---------- */
+        footer { background: var(--black); color: #bfbfbf; padding: 56px 0 28px; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 32px; margin-bottom: 40px; }
+        footer h4 { color: var(--white); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+        footer ul { list-style: none; }
+        footer li { margin-bottom: 8px; }
+        footer a:hover { color: var(--orange); }
+        .footer-bottom { border-top: 1px solid #333; padding-top: 20px; font-size: 0.85rem; color: var(--grey-500); }
+
+        .wa-float {
+            position: fixed; right: 20px; bottom: 20px; z-index: 60;
+            width: 58px; height: 58px; border-radius: 50%;
+            background: var(--whatsapp); color: var(--white);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.45);
         }
+        .wa-float svg { width: 30px; height: 30px; }
 
-        .submit-btn:hover {
-            background: #fdd55d;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        /* ---------- Responsive ---------- */
+        @media (max-width: 980px) {
+            .widget-grid { grid-template-columns: 1fr 1fr; }
+            .widget-grid .field-loc { grid-column: 1 / -1; }
+            .widget-grid .btn { grid-column: 1 / -1; }
+            .reserve-grid { grid-template-columns: 1fr; }
+            .summary { position: static; order: -1; }
         }
-
-        footer {
-            background: #1a2a6c;
-            color: white;
-            text-align: center;
-            padding: 2rem;
-            margin-top: 3rem;
-        }
-
-        .success-message {
-            background: #4caf50;
-            color: white;
-            padding: 1rem;
-            border-radius: 6px;
-            margin-bottom: 1rem;
-            text-align: center;
-            display: none;
-        }
-
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 1.8rem;
-            }
-
-            header p {
-                font-size: 1rem;
-            }
-
-            .gallery {
-                grid-template-columns: 1fr;
-            }
+        @media (max-width: 720px) {
+            .nav-links a:not(.btn) { display: none; }
+            .hero { padding: 48px 0 100px; }
+            .widget { padding: 18px; }
+            .widget-grid { grid-template-columns: 1fr; }
+            .benefits-grid, .steps, .footer-grid { grid-template-columns: 1fr; }
+            .form-grid { grid-template-columns: 1fr; }
+            .fleet-grid { grid-template-columns: 1fr; }
+            .car-arrow { opacity: 1; }
+            section { padding: 56px 0; }
+            .wrap { padding: 0 16px; }
+            .card { padding: 20px; }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>JMV SERVICE</h1>
-        <p>LOCATION DES VÉHICULE UTILITAIRE ET VOITURE</p>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="wrap">
+            <a href="#" class="logo">
+                <span class="logo-mark">JMV</span>
+                <span>SERVICE<br><small>LOCATION</small></span>
+            </a>
+            <div class="nav-links">
+                <a href="#" class="btn btn-outline js-wa-direct">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.88 1.21 3.08.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.69.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35zM12.04 21.5h-.01a9.46 9.46 0 0 1-4.82-1.32l-.35-.21-3.58.94.96-3.49-.23-.36a9.44 9.44 0 0 1-1.45-5.03c0-5.22 4.25-9.47 9.48-9.47 2.53 0 4.91.99 6.7 2.78a9.41 9.41 0 0 1 2.77 6.7c0 5.23-4.25 9.46-9.47 9.46zm8.06-17.53A11.32 11.32 0 0 0 12.04.63C5.76.63.65 5.74.65 12.02c0 2.01.52 3.97 1.52 5.69L.55 23.63l6.05-1.59a11.36 11.36 0 0 0 5.44 1.39h.01c6.28 0 11.39-5.11 11.39-11.39 0-3.04-1.19-5.9-3.34-8.06z"/></svg>
+                    WhatsApp
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="hero">
+        <div class="wrap">
+            <h1>Louez une <span>voiture</span> ou un <span>utilitaire</span></h1>
+        </div>
     </header>
 
-    <div class="container">
-        <div class="intro">
-            <h2>Bienvenue chez JMV Service</h2>
-            <p>Nous proposons des véhicules utilitaires adaptés au besoin de transport.</p>
-        </div>
+    <!-- Booking widget -->
+    <div class="wrap widget-wrap">
+        <form class="widget" id="quickSearch" novalidate>
+            <div class="widget-tabs">
+                <button type="button" class="chip active" data-type="all">Tous les véhicules</button>
+                <button type="button" class="chip" data-type="voiture">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14M5 17a2 2 0 1 1-4 0v-5l2-5h18l2 5v5a2 2 0 1 1-4 0M5 17a2 2 0 1 0 4 0m6 0a2 2 0 1 0 4 0"/></svg>
+                    Voitures
+                </button>
+                <button type="button" class="chip" data-type="utilitaire">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="5" width="15" height="11" rx="1"/><path d="M16 9h4l3 3v4h-7z"/><circle cx="5.5" cy="18" r="2"/><circle cx="18.5" cy="18" r="2"/></svg>
+                    Utilitaires
+                </button>
+            </div>
+            <div class="widget-grid">
+                <div class="field field-loc">
+                    <label for="qLocation">Lieu de prise en charge</label>
+                    <input type="text" id="qLocation" value="Genève" placeholder="Ville ou adresse">
+                </div>
+                <div class="field">
+                    <label for="qStartDate">Départ</label>
+                    <div class="datetime">
+                        <input type="date" id="qStartDate" required>
+                        <select id="qStartTime" aria-label="Heure de départ"></select>
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="qEndDate">Retour</label>
+                    <div class="datetime">
+                        <input type="date" id="qEndDate" required>
+                        <select id="qEndTime" aria-label="Heure de retour"></select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-orange">Voir les véhicules</button>
+            </div>
+            <div class="field-error" id="quickError"></div>
+        </form>
+    </div>
 
-        <div class="vehicles-section">
-            <h2>Véhicules Disponibles</h2>
-            <div class="gallery">
-                <div class="vehicle-card">
-                    <img class="vehicle-image" src="img/voiture1.png">
-                    <div class="vehicle-info">
-                        <h3>Mercedes</h3>
-                        <p>Description du véhicule</p>
-                    </div>
-                </div>
-                <div class="vehicle-card">
-                    <img class="vehicle-image" src="img/voiture2.jpeg">
-                    <div class="vehicle-info">
-                        <h3>Mercedes</h3>
-                        <p>Description du véhicule</p>
-                    </div>
-                </div>
-                <div class="vehicle-card">
-                    <img class="vehicle-image" src="img/voiture3.png">
-                    <div class="vehicle-info">
-                        <h3>Lexus</h3>
-                        <p>Description du véhicule</p>
-                    </div>
-                </div>
-                <div class="vehicle-card">
-                    <img class="vehicle-image" src="img/voiture4.png">
-                    <div class="vehicle-info">
-                        <h3>Lexus</h3>
-                        <p>Description du véhicule</p>
-                    </div>
+    <!-- Benefits -->
+    <div class="benefits">
+        <div class="wrap benefits-grid">
+            <div class="benefit">
+                <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+                <div>
+                    <h3>Réservation via WhatsApp</h3>
+                    <p>Votre demande arrive directement chez nous, réponse rapide garantie.</p>
                 </div>
             </div>
-        </div>
-
-        <div class="contact-section">
-            <h2>Contactez-nous</h2>
-            <div id="successMessage" class="success-message">
-                Merci ! Votre message a été envoyé avec succès.
+            <div class="benefit">
+                <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
+                <div>
+                    <h3>Véhicules entretenus</h3>
+                    <p>Des véhicules contrôlés régulièrement et prêts à rouler.</p>
+                </div>
             </div>
-            <form class="contact-form" id="contactForm">
-                <div class="form-group">
-                    <label for="name">Nom complet *</label>
-                    <input type="text" id="name" name="name" required>
+            <div class="benefit">
+                <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/></svg></div>
+                <div>
+                    <h3>Basés à Genève</h3>
+                    <p>Une agence locale, flexible et à votre écoute.</p>
                 </div>
-                <div class="form-group">
-                    <label for="email">Email *</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="phone">Téléphone *</label>
-                    <input type="tel" id="phone" name="phone" required>
-                </div>
-                <div class="form-group">
-                    <label for="vehicle">Véhicule souhaité</label>
-                    <select id="vehicle" name="vehicle">
-                        <option value="">-- Sélectionnez un type --</option>
-                        <option value="utilitaire">Véhicule utilitaire</option>
-                        <option value="voiture">Voiture</option>
-                        <option value="autre">Autre</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="message">Message *</label>
-                    <textarea id="message" name="message" required placeholder="Décrivez vos besoins de location..."></textarea>
-                </div>
-                <button type="submit" class="submit-btn">Envoyer la demande</button>
-            </form>
+            </div>
         </div>
     </div>
 
+    <!-- Fleet -->
+    <section id="flotte">
+        <div class="wrap">
+            <div class="section-head">
+                <span class="eyebrow">Notre flotte</span>
+                <h2>Choisissez votre véhicule</h2>
+                <p>Sélectionnez un véhicule pour l'ajouter à votre demande de réservation.</p>
+            </div>
+            <div class="fleet-filters" id="fleetFilters">
+                <button type="button" class="chip active" data-type="all">Tous</button>
+                <button type="button" class="chip" data-type="voiture">Voitures</button>
+                <button type="button" class="chip" data-type="utilitaire">Utilitaires</button>
+            </div>
+            <div class="fleet-grid" id="fleetGrid"></div>
+        </div>
+    </section>
+
+    <!-- How it works -->
+    <section id="fonctionnement" style="padding-top: 0;">
+        <div class="wrap">
+            <div class="section-head">
+                <span class="eyebrow">Simple et rapide</span>
+                <h2>Comment ça marche</h2>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <h3>Choisissez vos dates</h3>
+                    <p>Indiquez le lieu, la date et l'heure de départ et de retour.</p>
+                </div>
+                <div class="step">
+                    <h3>Sélectionnez un véhicule</h3>
+                    <p>Voiture ou utilitaire : choisissez celui qui correspond à votre besoin.</p>
+                </div>
+                <div class="step">
+                    <h3>Envoyez sur WhatsApp</h3>
+                    <p>Votre demande est envoyée par WhatsApp. Nous vous confirmons la disponibilité et le tarif.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reservation -->
+    <section class="reserve" id="reserver">
+        <div class="wrap">
+            <div class="section-head">
+                <span class="eyebrow">Réservation</span>
+                <h2>Finalisez votre demande</h2>
+            </div>
+
+            <form id="bookingForm" class="reserve-grid" novalidate>
+                <div class="card">
+                    <div class="form-block">
+                        <h3><span class="step-num">1</span> Véhicule et dates</h3>
+                        <div class="form-grid">
+                            <div class="field full">
+                                <label for="bVehicle">Véhicule *</label>
+                                <select id="bVehicle" required>
+                                    <option value="">-- Sélectionnez un véhicule --</option>
+                                </select>
+                            </div>
+                            <div class="field full">
+                                <label for="bLocation">Lieu de prise en charge *</label>
+                                <input type="text" id="bLocation" required placeholder="Ville ou adresse">
+                            </div>
+                            <div class="field">
+                                <label for="bStartDate">Départ *</label>
+                                <div class="datetime">
+                                    <input type="date" id="bStartDate" required>
+                                    <select id="bStartTime" aria-label="Heure de départ"></select>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="bEndDate">Retour *</label>
+                                <div class="datetime">
+                                    <input type="date" id="bEndDate" required>
+                                    <select id="bEndTime" aria-label="Heure de retour"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-block">
+                        <h3><span class="step-num">2</span> Vos coordonnées</h3>
+                        <div class="form-grid">
+                            <div class="field">
+                                <label for="bFirstName">Prénom *</label>
+                                <input type="text" id="bFirstName" required autocomplete="given-name">
+                            </div>
+                            <div class="field">
+                                <label for="bLastName">Nom *</label>
+                                <input type="text" id="bLastName" required autocomplete="family-name">
+                            </div>
+                            <div class="field">
+                                <label for="bPhone">Téléphone *</label>
+                                <input type="tel" id="bPhone" required autocomplete="tel" placeholder="+41 79 123 45 67">
+                            </div>
+                            <div class="field">
+                                <label for="bEmail">Email</label>
+                                <input type="email" id="bEmail" autocomplete="email" placeholder="facultatif">
+                            </div>
+                            <div class="field full">
+                                <label for="bMessage">Message</label>
+                                <textarea id="bMessage" placeholder="Précisez votre besoin : déménagement, nombre de km prévus, questions..."></textarea>
+                            </div>
+                            <label class="checkbox full">
+                                <input type="checkbox" id="bLicense" required>
+                                <span>Je confirme être titulaire d'un permis de conduire valide. *</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="field-error" id="bookingError"></div>
+                </div>
+
+                <aside class="card summary">
+                    <div class="summary-img" id="sumImg">
+                        <div class="placeholder">Aucun véhicule sélectionné</div>
+                    </div>
+                    <div class="summary-body">
+                        <h4 id="sumName">Votre réservation</h4>
+                        <div class="sub" id="sumSub">Choisissez un véhicule dans la liste</div>
+                        <div class="timeline">
+                            <div class="tl-item">
+                                <small>Départ</small>
+                                <span id="sumStart">–</span>
+                            </div>
+                            <div class="tl-item">
+                                <small>Retour</small>
+                                <span id="sumEnd">–</span>
+                            </div>
+                        </div>
+                        <div class="duration">
+                            <span>Durée</span>
+                            <strong id="sumDuration">–</strong>
+                        </div>
+                        <button type="submit" class="btn btn-wa">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.880 1.21 3.08.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.69.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35zM12.04 21.5h-.01a9.46 9.46 0 0 1-4.82-1.32l-.35-.21-3.58.94.96-3.49-.23-.36a9.44 9.44 0 0 1-1.45-5.030c0-5.22 4.25-9.47 9.48-9.47 2.53 0 4.91.99 6.7 2.78a9.41 9.41 0 0 1 2.77 6.7c0 5.23-4.25 9.46-9.47 9.46zm8.06-17.53A11.32 11.32 0 0 0 12.04.63C5.76.63.65 5.74.65 12.02c0 2.01.52 3.97 1.52 5.69L.55 23.63l6.05-1.59a11.36 11.36 0 0 0 5.44 1.39h.01c6.28 0 11.39-5.11 11.39-11.39 0-3.04-1.19-5.9-3.34-8.06z"/></svg>
+                            Envoyer sur WhatsApp
+                        </button>
+                        <p class="summary-note">WhatsApp s'ouvre avec votre demande pré-remplie, il ne reste qu'à appuyer sur « Envoyer ».</p>
+                    </div>
+                </aside>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
     <footer>
-        <p>&copy; 2024 JMV SERVICE - Tous droits réservés</p>
-        <p>Location de véhicules utilitaires et voitures</p>
+        <div class="wrap">
+            <div class="footer-grid">
+                <div>
+                    <a href="#" class="logo" style="color: var(--white); margin-bottom: 14px;">
+                        <span class="logo-mark">JMV</span>
+                        <span>SERVICE</span>
+                    </a>
+                    <p>Location de véhicules utilitaires et voitures à Genève.</p>
+                </div>
+                <div>
+                    <h4>Navigation</h4>
+                    <ul>
+                        <li><a href="#flotte">Nos véhicules</a></li>
+                        <li><a href="#fonctionnement">Comment ça marche</a></li>
+                        <li><a href="#reserver">Réserver</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Contact</h4>
+                    <ul>
+                        <li><a href="#" class="js-wa-direct">WhatsApp</a></li>
+                        <li>Genève, Suisse</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; <span id="year"></span> JMV SERVICE – Tous droits réservés
+            </div>
+        </div>
     </footer>
 
-    <script>
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
-                vehicle: document.getElementById('vehicle').value,
-                message: document.getElementById('message').value
-            };
+    <a href="#" class="wa-float js-wa-direct" aria-label="Nous contacter sur WhatsApp">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.030-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.88 1.21 3.08.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.69.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35zM12.04 21.5h-.01a9.46 9.46 0 0 1-4.82-1.32l-.35-.21-3.58.94.96-3.49-.23-.36a9.44 9.44 0 0 1-1.45-5.03c0-5.22 4.25-9.47 9.48-9.47 2.53 0 4.91.99 6.7 2.78a9.41 9.41 0 0 1 2.77 6.7c0 5.23-4.25 9.46-9.47 9.46zm8.06-17.53A11.32 11.32 0 0 0 12.04.63C5.76.63.65 5.74.65 12.02c0 2.01.52 3.97 1.52 5.69L.55 23.630l6.05-1.59a11.36 11.36 0 0 0 5.44 1.39h.01c6.28 0 11.39-5.11 11.39-11.39 0-3.04-1.19-5.9-3.34-8.06z"/></svg>
+    </a>
 
-            console.log('Demande de contact:', formData);
-            
-            document.getElementById('successMessage').style.display = 'block';
-            this.reset();
-            
-            setTimeout(() => {
-                document.getElementById('successMessage').style.display = 'none';
-            }, 5000);
-        });
+    <div class="toast" id="toast"></div>
+
+    <script>
+        /* =========================================================
+           CONFIGURATION — à modifier
+           ========================================================= */
+        const CONFIG = {
+            // Numéro WhatsApp qui reçoit les demandes.
+            // Format international, chiffres uniquement, sans "+" ni "00" (ex : 41791234567)
+            whatsappNumber: '41000000000',
+            openingHour: 7,   // première heure proposée
+            closingHour: 20   // dernière heure proposée
+        };
+
+        // Liste des véhicules : ajoutez / modifiez ici.
+        const VEHICLES = [
+            {
+                id: 'sprinter',
+                name: 'Mercedes-Benz Sprinter 313 CDI',
+                similar: 'Fourgon utilitaire',
+                type: 'utilitaire',
+                images: ['img/voiture1.png', 'img/voiture2.jpeg'],
+                specs: { seats: 3, gearbox: 'Manuelle', fuel: 'Diesel', extra: 'Grand volume' },
+                price: 'Sur demande'
+            },
+            {
+                id: 'lexus',
+                name: 'Lexus RX 400h',
+                similar: 'SUV hybride',
+                type: 'voiture',
+                images: ['img/voiture4.png', 'img/voiture3.png'],
+                specs: { seats: 5, gearbox: 'Automatique', fuel: 'Hybride', extra: '5 portes' },
+                price: 'Sur demande'
+            }
+        ];
+
+        /* ========================================================= */
+
+        const $ = (sel) => document.querySelector(sel);
+        const $$ = (sel) => document.querySelectorAll(sel);
+
+        const ICONS = {
+            seats: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+            gearbox: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="5" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="12" cy="19" r="2"/><path d="M5 7v10M12 7v10M19 7v5H5"/></svg>',
+            fuel: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18M3 22h12M3 10h12"/><path d="M15 8h2a2 2 0 0 1 2 2v6a1.5 1.5 0 0 0 3 0V9l-3-3"/></svg>',
+            extra: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"/></svg>',
+            chevL: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+            chevR: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>'
+        };
+
+        const state = { filter: 'all', selected: null };
+
+        /* ---------- Helpers dates ---------- */
+        const pad = (n) => String(n).padStart(2, '0');
+        const toISODate = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+        const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+        const combine = (date, time) => (date && time ? new Date(`${date}T${time}`) : null);
+        const fmtDate = (d) => d.toLocaleDateString('fr-CH', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' });
+        const fmtDateTime = (date, time) => {
+            const d = combine(date, time);
+            return d ? `${fmtDate(d)} à ${time.replace(':', 'h')}` : '–';
+        };
+
+        function fillTimeSelect(select, defaultValue) {
+            for (let h = CONFIG.openingHour; h <= CONFIG.closingHour; h++) {
+                for (const m of ['00', '30']) {
+                    if (h === CONFIG.closingHour && m === '30') continue;
+                    const v = `${pad(h)}:${m}`;
+                    select.add(new Option(v, v, false, v === defaultValue));
+                }
+            }
+        }
+
+        /* ---------- Rendu de la flotte ---------- */
+        function renderFleet() {
+            const grid = $('#fleetGrid');
+            grid.innerHTML = '';
+            VEHICLES
+                .filter(v => state.filter === 'all' || v.type === state.filter)
+                .forEach(v => {
+                    const card = document.createElement('article');
+                    card.className = 'car' + (state.selected === v.id ? ' selected' : '');
+                    card.dataset.id = v.id;
+                    const multi = v.images.length > 1;
+                    card.innerHTML = `
+                        <div class="car-media">
+                            <span class="car-tag">${v.type === 'utilitaire' ? 'Utilitaire' : 'Voiture'}</span>
+                            ${v.images.map((src, i) => `<img src="${src}" alt="${v.name} – photo ${i + 1}" loading="lazy" class="${i === 0 ? 'show' : ''}">`).join('')}
+                            ${multi ? `
+                                <button type="button" class="car-arrow prev" aria-label="Photo précédente">${ICONS.chevL}</button>
+                                <button type="button" class="car-arrow next" aria-label="Photo suivante">${ICONS.chevR}</button>
+                                <div class="car-dots">${v.images.map((_, i) => `<span class="${i === 0 ? 'on' : ''}"></span>`).join('')}</div>
+                            ` : ''}
+                        </div>
+                        <div class="car-body">
+                            <h3>${v.name}</h3>
+                            <div class="similar">${v.similar}</div>
+                            <div class="specs">
+                                <span class="spec">${ICONS.seats}${v.specs.seats} places</span>
+                                <span class="spec">${ICONS.gearbox}${v.specs.gearbox}</span>
+                                <span class="spec">${ICONS.fuel}${v.specs.fuel}</span>
+                                <span class="spec">${ICONS.extra}${v.specs.extra}</span>
+                            </div>
+                            <div class="car-foot">
+                                <div class="price"><small>Tarif</small><strong>${v.price}</strong></div>
+                                <button type="button" class="btn ${state.selected === v.id ? 'btn-dark' : 'btn-orange'} js-select">
+                                    ${state.selected === v.id ? 'Sélectionné ✓' : 'Réserver'}
+                                </button>
+                            </div>
+                        </div>`;
+                    grid.appendChild(card);
+
+                    if (multi) {
+                        let idx = 0;
+                        const imgs = card.querySelectorAll('.car-media img');
+                        const dots = card.querySelectorAll('.car-dots span');
+                        const go = (n) => {
+                            imgs[idx].classList.remove('show'); dots[idx].classList.remove('on');
+                            idx = (n + imgs.length) % imgs.length;
+                            imgs[idx].classList.add('show'); dots[idx].classList.add('on');
+                        };
+                        card.querySelector('.prev').onclick = () => go(idx - 1);
+                        card.querySelector('.next').onclick = () => go(idx + 1);
+                    }
+                    card.querySelector('.js-select').onclick = () => {
+                        selectVehicle(v.id);
+                        $('#reserver').scrollIntoView({ behavior: 'smooth' });
+                    };
+                });
+        }
+
+        function setFilter(type) {
+            state.filter = type;
+            $$('#fleetFilters .chip, .widget-tabs .chip').forEach(c => c.classList.toggle('active', c.dataset.type === type));
+            renderFleet();
+        }
+
+        function selectVehicle(id) {
+            state.selected = id || null;
+            $('#bVehicle').value = id || '';
+            renderFleet();
+            updateSummary();
+        }
+
+        /* ---------- Résumé ---------- */
+        function getDuration() {
+            const start = combine($('#bStartDate').value, $('#bStartTime').value);
+            const end = combine($('#bEndDate').value, $('#bEndTime').value);
+            if (!start || !end || end <= start) return null;
+            const hours = (end - start) / 36e5;
+            return Math.max(1, Math.ceil(hours / 24));
+        }
+
+        function updateSummary() {
+            const v = VEHICLES.find(x => x.id === state.selected);
+            const img = $('#sumImg');
+            if (v) {
+                img.innerHTML = `<img src="${v.images[0]}" alt="${v.name}">`;
+                $('#sumName').textContent = v.name;
+                $('#sumSub').textContent = `${v.similar} · ${v.specs.seats} places · ${v.specs.gearbox}`;
+            } else {
+                img.innerHTML = '<div class="placeholder">Aucun véhicule sélectionné</div>';
+                $('#sumName').textContent = 'Votre réservation';
+                $('#sumSub').textContent = 'Choisissez un véhicule dans la liste';
+            }
+            $('#sumStart').textContent = fmtDateTime($('#bStartDate').value, $('#bStartTime').value);
+            $('#sumEnd').textContent = fmtDateTime($('#bEndDate').value, $('#bEndTime').value);
+            const days = getDuration();
+            $('#sumDuration').textContent = days ? `${days} jour${days > 1 ? 's' : ''}` : '–';
+        }
+
+        /* ---------- Validation ---------- */
+        function validateDates(startDate, startTime, endDate, endTime) {
+            const start = combine(startDate, startTime);
+            const end = combine(endDate, endTime);
+            if (!start || !end) return 'Veuillez indiquer les dates de départ et de retour.';
+            if (start < new Date()) return 'La date de départ doit être dans le futur.';
+            if (end <= start) return 'La date de retour doit être après la date de départ.';
+            return null;
+        }
+
+        function showError(el, msg) {
+            el.textContent = msg || '';
+            el.style.display = msg ? 'block' : 'none';
+        }
+
+        function toast(msg) {
+            const t = $('#toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            clearTimeout(toast._t);
+            toast._t = setTimeout(() => t.classList.remove('show'), 4500);
+        }
+
+        /* ---------- WhatsApp ---------- */
+        function openWhatsApp(text) {
+            const url = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(text)}`;
+            const win = window.open(url, '_blank', 'noopener');
+            if (!win) window.location.href = url;
+        }
+
+        function buildMessage() {
+            const v = VEHICLES.find(x => x.id === $('#bVehicle').value);
+            const days = getDuration();
+            const lines = [
+                '*Nouvelle demande de réservation – JMV Service*',
+                '',
+                `🚗 *Véhicule :* ${v.name} (${v.similar})`,
+                `📍 *Prise en charge :* ${$('#bLocation').value.trim()}`,
+                `📅 *Départ :* ${fmtDateTime($('#bStartDate').value, $('#bStartTime').value)}`,
+                `📅 *Retour :* ${fmtDateTime($('#bEndDate').value, $('#bEndTime').value)}`,
+                `⏱️ *Durée :* ${days} jour${days > 1 ? 's' : ''}`,
+                '',
+                `👤 *Nom :* ${$('#bFirstName').value.trim()} ${$('#bLastName').value.trim()}`,
+                `📞 *Téléphone :* ${$('#bPhone').value.trim()}`
+            ];
+            const email = $('#bEmail').value.trim();
+            if (email) lines.push(`✉️ *Email :* ${email}`);
+            const msg = $('#bMessage').value.trim();
+            if (msg) lines.push('', `💬 *Message :* ${msg}`);
+            return lines.join('\n');
+        }
+
+        /* ---------- Init ---------- */
+        function init() {
+            $('#year').textContent = new Date().getFullYear();
+
+            const today = new Date();
+            const start = addDays(today, 1);
+            const end = addDays(today, 2);
+            const minDate = toISODate(today);
+
+            ['#qStartTime', '#qEndTime', '#bStartTime', '#bEndTime'].forEach(s => fillTimeSelect($(s), '09:00'));
+            ['#qStartDate', '#qEndDate', '#bStartDate', '#bEndDate'].forEach(s => $(s).min = minDate);
+            $('#qStartDate').value = $('#bStartDate').value = toISODate(start);
+            $('#qEndDate').value = $('#bEndDate').value = toISODate(end);
+            $('#bLocation').value = $('#qLocation').value;
+
+            VEHICLES.forEach(v => $('#bVehicle').add(new Option(`${v.name} – ${v.similar}`, v.id)));
+
+            // Le retour ne peut pas précéder le départ
+            const linkDates = (startSel, endSel) => {
+                $(startSel).addEventListener('change', () => {
+                    $(endSel).min = $(startSel).value;
+                    if ($(endSel).value < $(startSel).value) $(endSel).value = $(startSel).value;
+                });
+            };
+            linkDates('#qStartDate', '#qEndDate');
+            linkDates('#bStartDate', '#bEndDate');
+
+            // Filtres
+            $$('#fleetFilters .chip, .widget-tabs .chip').forEach(c => c.addEventListener('click', () => setFilter(c.dataset.type)));
+
+            // Recherche rapide -> copie vers le formulaire et affiche la flotte
+            $('#quickSearch').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const err = validateDates($('#qStartDate').value, $('#qStartTime').value, $('#qEndDate').value, $('#qEndTime').value);
+                showError($('#quickError'), err);
+                if (err) return;
+                $('#bLocation').value = $('#qLocation').value;
+                ['StartDate', 'StartTime', 'EndDate', 'EndTime'].forEach(k => $('#b' + k).value = $('#q' + k).value);
+                updateSummary();
+                $('#flotte').scrollIntoView({ behavior: 'smooth' });
+            });
+
+            // Formulaire de réservation
+            $('#bVehicle').addEventListener('change', (e) => selectVehicle(e.target.value));
+            ['#bStartDate', '#bStartTime', '#bEndDate', '#bEndTime'].forEach(s => $(s).addEventListener('change', updateSummary));
+
+            $('#bookingForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const errEl = $('#bookingError');
+                const form = e.target;
+
+                const firstInvalid = [...form.querySelectorAll('[required]')].find(el => !el.checkValidity());
+                if (firstInvalid) {
+                    const msg = firstInvalid.id === 'bLicense'
+                        ? 'Veuillez confirmer que vous avez un permis de conduire valide.'
+                        : firstInvalid.id === 'bVehicle'
+                            ? 'Veuillez sélectionner un véhicule.'
+                            : 'Veuillez remplir tous les champs obligatoires (*).';
+                    showError(errEl, msg);
+                    firstInvalid.focus();
+                    return;
+                }
+                const email = $('#bEmail');
+                if (email.value && !email.checkValidity()) {
+                    showError(errEl, 'L\'adresse email n\'est pas valide.');
+                    email.focus();
+                    return;
+                }
+                const dateErr = validateDates($('#bStartDate').value, $('#bStartTime').value, $('#bEndDate').value, $('#bEndTime').value);
+                if (dateErr) { showError(errEl, dateErr); return; }
+
+                showError(errEl, null);
+                openWhatsApp(buildMessage());
+                toast('WhatsApp s\'ouvre : appuyez sur « Envoyer » pour transmettre votre demande.');
+            });
+
+            // Liens WhatsApp directs
+            $$('.js-wa-direct').forEach(a => a.addEventListener('click', (e) => {
+                e.preventDefault();
+                openWhatsApp('Bonjour JMV Service, je souhaite des informations sur la location de véhicules.');
+            }));
+
+            renderFleet();
+            updateSummary();
+        }
+
+        init();
     </script>
 </body>
 </html>
